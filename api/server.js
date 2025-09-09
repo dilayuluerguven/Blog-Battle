@@ -7,7 +7,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Test endpoint
 app.get('/', (req, res) => {
   res.json({msg: 'backend started'});
 });
@@ -19,3 +18,5 @@ mongoose.connect(process.env.MONGO_URI)
     app.listen(PORT, () => console.log(`Server ${PORT} portunda çalışıyor`));
   })
   .catch(err => console.error(err));
+const authRoutes = require("./routes/auth");
+app.use("/api/auth", authRoutes);
