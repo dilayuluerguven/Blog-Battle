@@ -26,7 +26,9 @@ const Login = () => {
         throw new Error(data.error || "Giriş başarısız!");
       }
 
-     
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("username", data.user.username);
+
       navigate("/"); 
     } catch (err) {
       setError(err.message);
