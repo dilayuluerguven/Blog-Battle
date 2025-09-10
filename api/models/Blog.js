@@ -6,10 +6,10 @@ const BlogSchema = mongoose.Schema(
     content: { type: String, required: true },
     category: { type: String, required: true },
     image: { type: String },
-    author: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+    author: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // burada
     votes: [
       {
-        user: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // burada
       }
     ]
   },

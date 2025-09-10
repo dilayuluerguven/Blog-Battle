@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage";
 import BlogAddPage from "./pages/BlogAddPages";
 import TournamentMatch from "./components/TournamentMatch";
 import Profile from "./pages/Profile";
+import Notification from "./components/Notification";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/blog-add-page" element={<BlogAddPage />} />
         <Route path="/tournament" element={<TournamentMatch />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/notification" element={<Notification />} />
       </Routes>
     </BrowserRouter>
   );

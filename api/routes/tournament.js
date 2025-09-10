@@ -56,24 +56,36 @@ router.post("/:matchId/vote", verifyToken, async (req, res) => {
     const { blogId } = req.body;
     const userId = req.user.id;
 
-    const match = await TournamentMatch.findById(matchId);
+    const match = await TournamentMatch.findById(matchId)
+      .populate({ path: "blog1", populate: { path: "author", select: "_id username email" } })
+      .populate({ path: "blog2", populate: { path: "author", select: "_id username email" } });
+
     if (!match) return res.status(404).json({ error: "Maç bulunamadı" });
 
     if (match.votes.some(v => v.user.toString() === userId)) {
       return res.status(403).json({ error: "Bu maçta zaten oy kullandınız!" });
     }
 
-    const blogToVote = [match.blog1.toString(), match.blog2.toString()].includes(blogId);
+    const blogToVote = [match.blog1._id.toString(), match.blog2._id.toString()].includes(blogId);
     if (!blogToVote) return res.status(400).json({ error: "Geçersiz blog seçimi" });
 
+    const chosenBlog =
+      blogId === match.blog1._id.toString() ? match.blog1 : match.blog2;
+
+    if (chosenBlog.author._id.toString() === userId) {
+      return res.status(403).json({ error: "Kendi blogunuza oy veremezsiniz!" });
+    }
+
     match.votes.push({ user: userId, blog: blogId });
-    
+
     if (match.votes.length >= 2) {
       const voteCounts = {};
       match.votes.forEach(v => {
         voteCounts[v.blog] = (voteCounts[v.blog] || 0) + 1;
       });
-      const winnerBlogId = Object.keys(voteCounts).reduce((a, b) => voteCounts[a] > voteCounts[b] ? a : b);
+      const winnerBlogId = Object.keys(voteCounts).reduce((a, b) =>
+        voteCounts[a] > voteCounts[b] ? a : b
+      );
       match.completed = true;
       match.winner = winnerBlogId;
     }
@@ -91,5 +103,6 @@ router.post("/:matchId/vote", verifyToken, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 module.exports = router;
