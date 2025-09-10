@@ -2,13 +2,25 @@ const User = require("../models/User.js");
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
+const path = require("path");
 
-// Kayıt route
-router.post("/register", async (req, res) => {
+// uploads klasörüne dosya kaydı
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // proje kökünde uploads klasörü olmalı
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+const upload = multer({ storage });
+
+// Kayıt route (avatar dahil)
+router.post("/register", upload.single("avatar"), async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Şifreyi hashle
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -16,16 +28,34 @@ router.post("/register", async (req, res) => {
       username,
       email,
       password: hashedPassword,
+      avatar: req.file ? `/uploads/${req.file.filename}` : null, // avatar kaydet
     });
 
     await newUser.save();
-    res.status(200).json({ message: "A new user created." });
+
+    const token = jwt.sign(
+      { id: newUser._id, username: newUser.username },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES || "1d" }
+    );
+
+    res.status(200).json({
+      message: "User registered successfully",
+      token,
+      user: {
+        id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+        avatar: newUser.avatar,
+      },
+    });
   } catch (error) {
+    console.error(error);
     res.status(400).json(error);
   }
 });
 
-// Login route (JWT ile)
+// Login route
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -38,7 +68,6 @@ router.post("/login", async (req, res) => {
       return res.status(403).json({ error: "Invalid password" });
     }
 
-    // JWT oluştur
     const token = jwt.sign(
       { id: user._id, username: user.username },
       process.env.JWT_SECRET,
@@ -48,7 +77,12 @@ router.post("/login", async (req, res) => {
     res.status(200).json({
       message: "Login successful",
       token,
-      user: { id: user._id, username: user.username, email: user.email },
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar, // login olduktan sonra da döndürelim
+      },
     });
   } catch (error) {
     res.status(400).json(error);

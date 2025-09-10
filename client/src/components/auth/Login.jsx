@@ -27,9 +27,9 @@ const Login = () => {
       }
 
       localStorage.setItem("token", data.token);
-      localStorage.setItem("username", data.user.username);
+      localStorage.setItem("user", JSON.stringify(data.user));
 
-      navigate("/"); 
+      navigate("/");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -72,6 +72,7 @@ const Login = () => {
                 Giriş Yap ve Yarışa Katıl
               </Button>
             </Form.Item>
+
             <Form.Item name="remember" valuePropName="checked">
               <div className="flex justify-between items-center">
                 <Checkbox>Beni Hatırla</Checkbox>
