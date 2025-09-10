@@ -103,7 +103,6 @@ router.put("/:id", verifyToken, async (req, res) => {
   }
 });
 
-// Blog silme
 router.delete("/:id", verifyToken, async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
@@ -111,8 +110,14 @@ router.delete("/:id", verifyToken, async (req, res) => {
     if (blog.author.toString() !== req.user.id)
       return res.status(403).json({ error: "Yetkiniz yok" });
 
+    
     await Blog.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Blog silindi" });
+
+    await TournamentMatch.deleteMany({
+      $or: [{ blog1: req.params.id }, { blog2: req.params.id }],
+    });
+
+    res.status(200).json({ message: "Blog ve ilişkili maçlar silindi" });
   } catch (err) {
     console.error(err);
     res.status(400).json({ error: err.message });

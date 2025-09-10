@@ -28,7 +28,7 @@ const BlogAdd = () => {
       if (!res.ok) throw new Error(data.error || "Blog eklenemedi");
 
       message.success("Blog başarıyla eklendi!");
-      navigate("/match-page");
+      navigate("/");
     } catch (err) {
       message.error(err.message);
     } finally {

@@ -45,6 +45,7 @@ const Login = () => {
           <p className="text-center mb-6 text-gray-600">
             Kendi blog yazını oluştur ve diğer yazılarla yarış!
           </p>
+
           <Form layout="vertical" onFinish={onFinish}>
             <Form.Item
               label="E-Mail:"
@@ -70,6 +71,17 @@ const Login = () => {
                 loading={loading}
               >
                 Giriş Yap ve Yarışa Katıl
+              </Button>
+            </Form.Item>
+
+            <Form.Item>
+              <Button
+                type="default"
+                className="w-full"
+                size="large"
+                onClick={() => navigate("/")}
+              >
+                Giriş Yapmadan Blog Oku
               </Button>
             </Form.Item>
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Spin, Badge } from "antd";
+import { Button, Spin, Badge, Popconfirm } from "antd";
 import { useNavigate } from "react-router-dom";
 import { Header } from "../components/header/Header";
 
@@ -12,7 +12,6 @@ const TournamentMatch = () => {
   const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
 
-  useEffect(() => {
   const fetchMatches = async () => {
     try {
       setLoading(true);
@@ -36,9 +35,9 @@ const TournamentMatch = () => {
     }
   };
 
-  fetchMatches();
-}, [token]);
-
+  useEffect(() => {
+    fetchMatches();
+  }, [token]);
 
   const vote = async (matchId, blogId, authorId) => {
     if (!token) {
@@ -81,6 +80,33 @@ const TournamentMatch = () => {
       setMessage(err.message);
     } finally {
       setVoteLoading(null);
+    }
+  };
+
+  const deleteBlog = async (blogId) => {
+    if (!token) {
+      setMessage("Silmek için giriş yapmalısınız!");
+      setTimeout(() => navigate("/login"), 500);
+      return;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/blogs/${blogId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Silme işlemi başarısız");
+
+      setMessage(data.message || "Blog ve ilişkili maçlar silindi");
+      setTimeout(() => setMessage(""), 3000);
+
+      // Maçları yeniden yükle
+      fetchMatches();
+    } catch (err) {
+      setMessage(err.message);
     }
   };
 
@@ -145,13 +171,25 @@ const TournamentMatch = () => {
                     </div>
 
                     {blog.author && (
-                      <div className="flex items-center mb-4">
-                        <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold mr-3">
-                          {blog.author.username.charAt(0).toUpperCase()}
+                      <div className="flex items-center mb-4 justify-between">
+                        <div className="flex items-center">
+                          <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold mr-3">
+                            {blog.author.username.charAt(0).toUpperCase()}
+                          </div>
+                          <span className="font-semibold text-gray-800">
+                            {blog.author.username}
+                          </span>
                         </div>
-                        <span className="font-semibold text-gray-800">
-                          {blog.author.username}
-                        </span>
+                        {blog.author._id === userId && (
+                          <Popconfirm
+                            title="Bu blogu silmek istediğinize emin misiniz?"
+                            onConfirm={() => deleteBlog(blog._id)}
+                            okText="Evet"
+                            cancelText="Hayır"
+                          >
+                            <Button type="danger">Sil</Button>
+                          </Popconfirm>
+                        )}
                       </div>
                     )}
 
@@ -176,7 +214,10 @@ const TournamentMatch = () => {
                       }
                       className="mt-auto rounded-xl"
                     >
-                      Oy Ver <Badge count={blog.votes?.length || 0} />
+                      Oy Ver{" "}
+                      <Badge
+                        count={match.votes.filter((v) => v.blog === blog._id).length || 0}
+                      />
                     </Button>
 
                     {match.completed && match.winner === blog._id && (
