@@ -179,134 +179,212 @@ const Profile = () => {
   return (
     <>
       <Header />
-      <div className="max-w-xl mx-auto py-12 px-6">
-        <h1 className="text-3xl font-bold text-center mb-8">Profilim</h1>
+      <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
+          Profilim
+        </h1>
 
-        {user && !editMode && (
-          <div className="text-center mb-6">
-            {user.avatar ? (
-              <img
-                src={`http://localhost:5000${user.avatar}`}
-                alt="Profil"
-                className="mx-auto w-24 h-24 rounded-full object-cover mb-4"
-              />
-            ) : (
-              <UserOutlined
-                style={{ fontSize: 96 }}
-                className="text-gray-400 mb-4"
-              />
-            )}
-            <p className="text-lg font-semibold">{user.username}</p>
-            <p className="text-gray-600">{user.email}</p>
-            <div className="flex justify-center gap-2 mt-4">
-              <Button type="primary" onClick={() => setEditMode(true)}>
-                Güncelle
-              </Button>
-              <Popconfirm
-                title="Hesabınızı silmek istediğinizden emin misiniz? Tüm bloglarınız da silinecek."
-                onConfirm={handleDeleteAccount}
-              >
-                <Button type="danger" icon={<UserDeleteOutlined />}>
-                  Hesabı Kaldır
-                </Button>
-              </Popconfirm>
-            </div>
-          </div>
-        )}
+        <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+          {user && !editMode && (
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+              <div className="flex-shrink-0">
+                {user.avatar ? (
+                  <img
+                    src={`http://localhost:5000${user.avatar}`}
+                    alt="Profil"
+                    className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
+                  />
+                ) : (
+                  <div className="w-32 h-32 rounded-full bg-gray-100 border-4 border-white shadow-lg flex items-center justify-center">
+                    <UserOutlined className="text-5xl text-gray-400" />
+                  </div>
+                )}
+              </div>
 
-        {user && editMode && (
-          <Form form={form} layout="vertical" onFinish={handleSubmit}>
-            <Form.Item
-              label="Kullanıcı Adı"
-              name="username"
-              rules={[{ required: true, message: "Kullanıcı adı gerekli" }]}
-            >
-              <Input disabled={loading} />
-            </Form.Item>
-            <Form.Item
-              label="E-posta"
-              name="email"
-              rules={[
-                { required: true, message: "E-posta gerekli" },
-                { type: "email", message: "Geçerli e-posta girin" },
-              ]}
-            >
-              <Input disabled={loading} />
-            </Form.Item>
-            <Form.Item label="Profil Resmi">
-              <Upload
-                beforeUpload={() => false}
-                maxCount={1}
-                onChange={handleAvatarChange}
-                listType="picture"
-                accept="image/*"
-                disabled={loading}
-              >
-                <Button icon={<UploadOutlined />}>Resim Yükle</Button>
-              </Upload>
-              {user.avatar ? (
-                <img
-                  src={`http://localhost:5000${user.avatar}`}
-                  alt="Profil"
-                  className="mt-3 w-20 h-20 rounded-full object-cover"
-                />
-              ) : (
-                <UserOutlined
-                  style={{ fontSize: 48 }}
-                  className="text-gray-400 mt-3"
-                />
-              )}
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" loading={loading} block>
-                Kaydet
-              </Button>
-              <Button
-                type="default"
-                onClick={() => {
-                  setEditMode(false);
-                  form.setFieldsValue({
-                    username: user.username,
-                    email: user.email,
-                  });
-                }}
-                block
-                className="mt-2"
-              >
-                İptal
-              </Button>
-            </Form.Item>
-          </Form>
-        )}
+              <div className="flex-grow text-center md:text-left">
+                <h2 className="text-2xl font-semibold text-gray-800">
+                  {user.username}
+                </h2>
+                <p className="text-gray-600 mb-4">{user.email}</p>
 
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold mb-4">Bloglarım</h2>
-          {blogs.length === 0 ? (
-            <p>Henüz blog eklemediniz</p>
-          ) : (
-            blogs.map((blog) => (
-              <Card key={blog._id} title={blog.title} className="mb-4">
-                <p>{blog.content}</p>
-                <div className="flex gap-2 mt-2">
-                  <Popconfirm
-                    title="Blog silinsin mi?"
-                    onConfirm={() => handleDeleteBlog(blog._id)}
+                <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+                  <Button
+                    type="primary"
+                    onClick={() => setEditMode(true)}
+                    className="flex items-center justify-center"
                   >
-                    <Button type="primary" danger icon={<DeleteOutlined />}>
-                      Sil
+                    <EditOutlined className="mr-1" /> Profili Düzenle
+                  </Button>
+                  <Popconfirm
+                    title="Hesabınızı silmek istediğinizden emin misiniz? Tüm bloglarınız da silinecek."
+                    onConfirm={handleDeleteAccount}
+                    okText="Evet"
+                    cancelText="Hayır"
+                  >
+                    <Button
+                      type="danger"
+                      icon={<UserDeleteOutlined />}
+                      className="flex items-center justify-center"
+                    >
+                      Hesabı Sil
                     </Button>
                   </Popconfirm>
-                  <Button
-                    type="default"
-                    icon={<EditOutlined />}
-                    onClick={() => handleEditBlog(blog)}
-                    className="text-blue-600 border-blue-600 hover:bg-blue-50"
-                  >
-                    Güncelle
-                  </Button>
                 </div>
-              </Card>
-            ))
+              </div>
+            </div>
+          )}
+
+          {user && editMode && (
+            <Form form={form} layout="vertical" onFinish={handleSubmit}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Form.Item
+                    label="Kullanıcı Adı"
+                    name="username"
+                    rules={[
+                      { required: true, message: "Kullanıcı adı gerekli" },
+                    ]}
+                  >
+                    <Input disabled={loading} size="large" />
+                  </Form.Item>
+                  <Form.Item
+                    label="E-posta"
+                    name="email"
+                    rules={[
+                      { required: true, message: "E-posta gerekli" },
+                      { type: "email", message: "Geçerli e-posta girin" },
+                    ]}
+                  >
+                    <Input disabled={loading} size="large" />
+                  </Form.Item>
+                </div>
+
+                <div>
+                  <Form.Item label="Profil Resmi">
+                    <Upload
+                      beforeUpload={() => false}
+                      maxCount={1}
+                      onChange={handleAvatarChange}
+                      listType="picture"
+                      accept="image/*"
+                      disabled={loading}
+                    >
+                      <Button
+                        icon={<UploadOutlined />}
+                        size="large"
+                        className="w-full"
+                      >
+                        Resim Yükle
+                      </Button>
+                    </Upload>
+                    <div className="mt-4 flex justify-center">
+                      {user.avatar ? (
+                        <img
+                          src={`http://localhost:5000${user.avatar}`}
+                          alt="Profil"
+                          className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
+                        />
+                      ) : (
+                        <div className="w-20 h-20 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center">
+                          <UserOutlined className="text-2xl text-gray-400" />
+                        </div>
+                      )}
+                    </div>
+                  </Form.Item>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading}
+                  size="large"
+                  className="flex-1"
+                >
+                  Değişiklikleri Kaydet
+                </Button>
+                <Button
+                  type="default"
+                  onClick={() => {
+                    setEditMode(false);
+                    form.setFieldsValue({
+                      username: user.username,
+                      email: user.email,
+                    });
+                  }}
+                  size="large"
+                  className="flex-1"
+                >
+                  İptal
+                </Button>
+              </div>
+            </Form>
+          )}
+        </div>
+
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6 pb-2 border-b border-gray-200">
+            Bloglarım
+          </h2>
+
+          {blogs.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500 text-lg">Henüz blog eklemediniz</p>
+              <Button
+                type="primary"
+                className="mt-4"
+                onClick={() => navigate("/blog-add-page")}
+              >
+                İlk Blogunu Ekle
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {blogs.map((blog) => (
+                <Card
+                  key={blog._id}
+                  className="border-0 shadow-sm hover:shadow-md transition-shadow duration-300"
+                  title={
+                    <h3 className="text-lg font-semibold text-gray-800 m-0">
+                      {blog.title}
+                    </h3>
+                  }
+                >
+                  <p className="text-gray-600 mb-4">
+                    {blog.content.length > 150
+                      ? `${blog.content.substring(0, 150)}...`
+                      : blog.content}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <Popconfirm
+                      title="Blog silinsin mi?"
+                      onConfirm={() => handleDeleteBlog(blog._id)}
+                      okText="Evet"
+                      cancelText="Hayır"
+                    >
+                      <Button
+                        type="primary"
+                        danger
+                        icon={<DeleteOutlined />}
+                        size="small"
+                      >
+                        Sil
+                      </Button>
+                    </Popconfirm>
+                    <Button
+                      type="default"
+                      icon={<EditOutlined />}
+                      onClick={() => handleEditBlog(blog)}
+                      size="small"
+                      className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                    >
+                      Düzenle
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+            </div>
           )}
         </div>
       </div>
@@ -316,6 +394,7 @@ const Profile = () => {
         open={editBlogModal}
         onCancel={() => setEditBlogModal(false)}
         footer={null}
+        width={700}
       >
         <Form form={blogForm} layout="vertical" onFinish={handleUpdateBlog}>
           <Form.Item
@@ -323,18 +402,21 @@ const Profile = () => {
             name="title"
             rules={[{ required: true, message: "Başlık gerekli" }]}
           >
-            <Input />
+            <Input size="large" />
           </Form.Item>
           <Form.Item
             label="İçerik"
             name="content"
             rules={[{ required: true, message: "İçerik gerekli" }]}
           >
-            <Input.TextArea rows={4} />
+            <Input.TextArea rows={6} />
           </Form.Item>
-          <Button type="primary" htmlType="submit" block>
-            Kaydet
-          </Button>
+          <div className="flex justify-end gap-3">
+            <Button onClick={() => setEditBlogModal(false)}>İptal</Button>
+            <Button type="primary" htmlType="submit">
+              Güncelle
+            </Button>
+          </div>
         </Form>
       </Modal>
     </>
