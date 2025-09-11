@@ -2,12 +2,18 @@
 
 Blog Battle, kullanıcıların blog yazıları oluşturabildiği, paylaşabildiği ve diğer kullanıcıların yazıları oylayabildiği bir platformdur.
 
-## Özellikler
-- Kayıt olma ve giriş yapma
-- Blog paylaşma
-- Blogları görüntüleme
-- Bloglara oy verme
-- Kayıt olmadan sadece blogları görüntüleme
+#Özellikler
+
+Kayıt & Giriş: JWT tabanlı kimlik doğrulama ile kayıt olabilir ve giriş yapabilirsiniz.
+
+Blog Paylaşımı: Görsel, başlık ve içerik ekleyerek blog oluşturabilir; profil sayfanızdan kendi bloglarınızı silebilir veya düzenleyebilirsiniz blog silerseniz yarıştan ayrılırsınız.
+
+Blog Görüntüleme: Kayıt olmadan tüm blogları görüntüleyebilirsiniz.
+
+Oylama: Bloglara oy verebilmek için giriş yapmanız gerekir. Kendi blogunuza oy veremezsiniz ve her eşleşmede yalnızca bir bloga oy kullanabilirsiniz.
+
+Blog Yarışları: “Blog Yarışları” bölümünde eşleşen blogları görebilir, giriş yaptıysanız oy kullanabilirsiniz.
+
 
 ## Kurulum ve Çalıştırma
 
