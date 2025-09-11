@@ -14,20 +14,18 @@ const Register = () => {
     setError(null);
 
     try {
-      // FormData oluştur
       const formData = new FormData();
       formData.append("username", username);
       formData.append("email", email);
       formData.append("password", password);
 
       if (avatar && avatar[0]) {
-        // antd Upload’dan dosyayı al
         formData.append("avatar", avatar[0].originFileObj);
       }
 
       const res = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
-        body: formData, // JSON yerine formData
+        body: formData,
       });
 
       const data = await res.json();
@@ -38,11 +36,9 @@ const Register = () => {
         );
       }
 
-      // JWT ve kullanıcı bilgilerini localStorage'a kaydet
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // Ana sayfaya yönlendir
       navigate("/");
     } catch (err) {
       setError(err.message);
@@ -104,7 +100,6 @@ const Register = () => {
               <Input.Password />
             </Form.Item>
 
-            {/* Avatar alanı */}
             <Form.Item label="Avatar" name="avatar" valuePropName="fileList" getValueFromEvent={e => e && e.fileList}>
               <Upload beforeUpload={() => false} listType="picture">
                 <Button>Avatar Yükle</Button>

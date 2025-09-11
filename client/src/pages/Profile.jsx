@@ -1,6 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Upload, message, Spin, Card, Popconfirm } from "antd";
-import { UploadOutlined, DeleteOutlined, UserDeleteOutlined } from "@ant-design/icons";
+import {
+  Form,
+  Input,
+  Button,
+  Upload,
+  message,
+  Spin,
+  Card,
+  Popconfirm,
+  Modal,
+} from "antd";
+import {
+  UploadOutlined,
+  DeleteOutlined,
+  UserDeleteOutlined,
+  UserOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { Header } from "../components/header/Header";
 
@@ -11,6 +27,11 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [avatarFile, setAvatarFile] = useState(null);
+
+  const [editBlogModal, setEditBlogModal] = useState(false);
+  const [editingBlog, setEditingBlog] = useState(null);
+  const [blogForm] = Form.useForm();
+
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
@@ -88,7 +109,7 @@ const Profile = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Blog silinemedi");
-      setBlogs(prev => prev.filter(b => b._id !== blogId));
+      setBlogs((prev) => prev.filter((b) => b._id !== blogId));
       message.success("Blog silindi");
     } catch (err) {
       console.error(err);
@@ -112,7 +133,48 @@ const Profile = () => {
     }
   };
 
-  if (loading && !user) return <div className="flex justify-center items-center min-h-screen"><Spin size="large" /></div>;
+  const handleEditBlog = (blog) => {
+    setEditingBlog(blog);
+    blogForm.setFieldsValue({
+      title: blog.title,
+      content: blog.content,
+    });
+    setEditBlogModal(true);
+  };
+
+  const handleUpdateBlog = async (values) => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/blogs/${editingBlog._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(values),
+        }
+      );
+      if (!res.ok) throw new Error("Blog güncellenemedi");
+      const updated = await res.json();
+      setBlogs((prev) =>
+        prev.map((b) => (b._id === updated._id ? updated : b))
+      );
+      message.success("Blog güncellendi");
+      setEditBlogModal(false);
+      setEditingBlog(null);
+    } catch (err) {
+      console.error(err);
+      message.error(err.message);
+    }
+  };
+
+  if (loading && !user)
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Spin size="large" />
+      </div>
+    );
 
   return (
     <>
@@ -122,16 +184,31 @@ const Profile = () => {
 
         {user && !editMode && (
           <div className="text-center mb-6">
-            {user.avatar && <img src={`http://localhost:5000${user.avatar}`} alt="Profil" className="mx-auto w-24 h-24 rounded-full object-cover mb-4" />}
+            {user.avatar ? (
+              <img
+                src={`http://localhost:5000${user.avatar}`}
+                alt="Profil"
+                className="mx-auto w-24 h-24 rounded-full object-cover mb-4"
+              />
+            ) : (
+              <UserOutlined
+                style={{ fontSize: 96 }}
+                className="text-gray-400 mb-4"
+              />
+            )}
             <p className="text-lg font-semibold">{user.username}</p>
             <p className="text-gray-600">{user.email}</p>
             <div className="flex justify-center gap-2 mt-4">
-              <Button type="primary" onClick={() => setEditMode(true)}>Güncelle</Button>
+              <Button type="primary" onClick={() => setEditMode(true)}>
+                Güncelle
+              </Button>
               <Popconfirm
                 title="Hesabınızı silmek istediğinizden emin misiniz? Tüm bloglarınız da silinecek."
                 onConfirm={handleDeleteAccount}
               >
-                <Button type="danger" icon={<UserDeleteOutlined />}>Hesabı Kaldır</Button>
+                <Button type="danger" icon={<UserDeleteOutlined />}>
+                  Hesabı Kaldır
+                </Button>
               </Popconfirm>
             </div>
           </div>
@@ -139,21 +216,65 @@ const Profile = () => {
 
         {user && editMode && (
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
-            <Form.Item label="Kullanıcı Adı" name="username" rules={[{ required: true, message: "Kullanıcı adı gerekli" }]}>
+            <Form.Item
+              label="Kullanıcı Adı"
+              name="username"
+              rules={[{ required: true, message: "Kullanıcı adı gerekli" }]}
+            >
               <Input disabled={loading} />
             </Form.Item>
-            <Form.Item label="E-posta" name="email" rules={[{ required: true, message: "E-posta gerekli" }, { type: "email", message: "Geçerli e-posta girin" }]}>
+            <Form.Item
+              label="E-posta"
+              name="email"
+              rules={[
+                { required: true, message: "E-posta gerekli" },
+                { type: "email", message: "Geçerli e-posta girin" },
+              ]}
+            >
               <Input disabled={loading} />
             </Form.Item>
             <Form.Item label="Profil Resmi">
-              <Upload beforeUpload={() => false} maxCount={1} onChange={handleAvatarChange} listType="picture" accept="image/*" disabled={loading}>
+              <Upload
+                beforeUpload={() => false}
+                maxCount={1}
+                onChange={handleAvatarChange}
+                listType="picture"
+                accept="image/*"
+                disabled={loading}
+              >
                 <Button icon={<UploadOutlined />}>Resim Yükle</Button>
               </Upload>
-              {user.avatar && <img src={`http://localhost:5000${user.avatar}`} alt="Profil" className="mt-3 w-20 h-20 rounded-full object-cover" />}
+              {user.avatar ? (
+                <img
+                  src={`http://localhost:5000${user.avatar}`}
+                  alt="Profil"
+                  className="mt-3 w-20 h-20 rounded-full object-cover"
+                />
+              ) : (
+                <UserOutlined
+                  style={{ fontSize: 48 }}
+                  className="text-gray-400 mt-3"
+                />
+              )}
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit" loading={loading} block>Kaydet</Button>
-              <Button type="default" onClick={() => { setEditMode(false); form.setFieldsValue({ username: user.username, email: user.email }); }} block className="mt-2">İptal</Button>
+              <Button type="primary" htmlType="submit" loading={loading} block>
+                Kaydet
+              </Button>
+              <Button
+                type="default"
+                onClick={() => {
+                  setEditMode(false);
+                  form.setFieldsValue({
+                    username: user.username,
+                    email: user.email,
+                  });
+                }}
+                block
+                className="mt-2"
+              >
+                İptal
+              </Button>
             </Form.Item>
           </Form>
         )}
@@ -163,17 +284,59 @@ const Profile = () => {
           {blogs.length === 0 ? (
             <p>Henüz blog eklemediniz</p>
           ) : (
-            blogs.map(blog => (
+            blogs.map((blog) => (
               <Card key={blog._id} title={blog.title} className="mb-4">
                 <p>{blog.content}</p>
-                <Popconfirm title="Blog silinsin mi?" onConfirm={() => handleDeleteBlog(blog._id)}>
-                  <Button type="primary" danger icon={<DeleteOutlined />}>Sil</Button>
-                </Popconfirm>
+                <div className="flex gap-2 mt-2">
+                  <Popconfirm
+                    title="Blog silinsin mi?"
+                    onConfirm={() => handleDeleteBlog(blog._id)}
+                  >
+                    <Button type="primary" danger icon={<DeleteOutlined />}>
+                      Sil
+                    </Button>
+                  </Popconfirm>
+                  <Button
+                    type="default"
+                    icon={<EditOutlined />}
+                    onClick={() => handleEditBlog(blog)}
+                    className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                  >
+                    Güncelle
+                  </Button>
+                </div>
               </Card>
             ))
           )}
         </div>
       </div>
+
+      <Modal
+        title="Blog Güncelle"
+        open={editBlogModal}
+        onCancel={() => setEditBlogModal(false)}
+        footer={null}
+      >
+        <Form form={blogForm} layout="vertical" onFinish={handleUpdateBlog}>
+          <Form.Item
+            label="Başlık"
+            name="title"
+            rules={[{ required: true, message: "Başlık gerekli" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="İçerik"
+            name="content"
+            rules={[{ required: true, message: "İçerik gerekli" }]}
+          >
+            <Input.TextArea rows={4} />
+          </Form.Item>
+          <Button type="primary" htmlType="submit" block>
+            Kaydet
+          </Button>
+        </Form>
+      </Modal>
     </>
   );
 };
