@@ -33,3 +33,9 @@ Blog Yarışları: “Blog Yarışları” bölümünde eşleşen blogları gör
 4.Kullanım:
   Kayıt olup giriş yaptıktan sonra blog paylaşabilir ve oy verebilirsiniz.
   Kayıt olmadan sadece blogları görüntüleyebilirsiniz.
+
+  MongoDb üzerindeki veritabanı kayıtları ekte verilmiştir.
+<img width="1161" height="476" alt="image" src="https://github.com/user-attachments/assets/fb2cf8ce-84a6-43c4-b114-607a3d0274dd" />
+<img width="1087" height="483" alt="image" src="https://github.com/user-attachments/assets/f29e6c94-f279-42a2-8942-06385caeac01" />
+
+
