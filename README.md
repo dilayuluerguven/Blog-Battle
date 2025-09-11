@@ -19,20 +19,24 @@ Dilerseniz de Hesabı Kaldır butonunu kullanarak hesabınızı ve tüm bloglar�
 
 ## Kurulum ve Çalıştırma
 
-1. Repository'i bilgisayarınıza indirin
+1. Repository'i bilgisayarınıza indirin.
 
-
-2. Backend'i çalıştırın:
-  cd api
-  npm run dev
+2. Backend ve frontend bağımlılıklarını yükleyin:
+   ```bash
+   cd api
+   npm install
+   cd ../client
+   npm install
 
 
 3.Frontend'i çalıştırın:
   cd client
   npm run dev
-
+4. Backend'i çalıştırın:
+  cd api
+  npm run dev
   
-4.Kullanım:
+5.Kullanım:
   Kayıt olup giriş yaptıktan sonra blog paylaşabilir ve oy verebilirsiniz.
   Kayıt olmadan sadece blogları görüntüleyebilirsiniz.
 
