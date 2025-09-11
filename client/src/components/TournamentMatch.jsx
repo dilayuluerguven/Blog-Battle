@@ -47,22 +47,21 @@ const TournamentMatch = () => {
   }, [token]);
 
   const vote = async (matchId, blogId, authorId) => {
-    // Mesajları temizle
-    setVoteMessages(prev => ({ ...prev, [matchId]: "" }));
+    setVoteMessages(prev => ({ ...prev, [matchId]: null }));
 
     if (!token) {
-      setVoteMessages(prev => ({ ...prev, [matchId]: "Oy vermek için giriş yapmalısınız!" }));
+      setVoteMessages(prev => ({ ...prev, [matchId]: { type: "error", text: "Oy vermek için giriş yapmalısınız!" } }));
       setTimeout(() => navigate("/login"), 500);
       return;
     }
     if (authorId === userId) {
-      setVoteMessages(prev => ({ ...prev, [matchId]: "Kendi blogunuza oy veremezsiniz!" }));
+      setVoteMessages(prev => ({ ...prev, [matchId]: { type: "error", text: "Kendi blogunuza oy veremezsiniz!" } }));
       return;
     }
 
     const match = matches.find((m) => m._id === matchId);
     if (match.votes.some((v) => v.user === userId)) {
-      setVoteMessages(prev => ({ ...prev, [matchId]: "Bu maçta zaten oy kullandınız!" }));
+      setVoteMessages(prev => ({ ...prev, [matchId]: { type: "error", text: "Bu maçta zaten oy kullandınız!" } }));
       return;
     }
 
@@ -81,12 +80,13 @@ const TournamentMatch = () => {
       );
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Oy verilemedi");
+
       setMatches((prev) =>
         prev.map((m) => (m._id === matchId ? data.match || m : m))
       );
-      setVoteMessages(prev => ({ ...prev, [matchId]: "Oy verildi!" }));
+      setVoteMessages(prev => ({ ...prev, [matchId]: { type: "success", text: "Oy verildi!" } }));
     } catch (err) {
-      setVoteMessages(prev => ({ ...prev, [matchId]: err.message }));
+      setVoteMessages(prev => ({ ...prev, [matchId]: { type: "error", text: err.message } }));
     } finally {
       setVoteLoading(null);
     }
@@ -185,7 +185,9 @@ const TournamentMatch = () => {
                       </div>
                     )}
                     {voteMessages[match._id] && (
-                      <div className="text-red-600 text-sm mt-2">{voteMessages[match._id]}</div>
+                      <div className={`text-sm mt-2 ${voteMessages[match._id].type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+                        {voteMessages[match._id].text}
+                      </div>
                     )}
                   </div>
 
