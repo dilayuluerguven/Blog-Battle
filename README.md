@@ -14,6 +14,8 @@ Oylama: Bloglara oy verebilmek için giriş yapmanız gerekir. Kendi blogunuza o
 
 Blog Yarışları: “Blog Yarışları” bölümünde eşleşen blogları görebilir, giriş yaptıysanız oy kullanabilirsiniz.
 
+Profil: Profil kısmından verilerinizi düzenleyebilirsiniz, yaptığınız değişiklikler otomatik olarak veritabanına kaydedilir.  
+Dilerseniz de Hesabı Kaldır butonunu kullanarak hesabınızı ve tüm bloglarınızı silebilirsiniz.
 
 ## Kurulum ve Çalıştırma
 
