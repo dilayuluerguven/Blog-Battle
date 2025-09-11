@@ -21,13 +21,14 @@ Dilerseniz de Hesabı Kaldır butonunu kullanarak hesabınızı ve tüm bloglar�
 
 1. Repository'i bilgisayarınıza indirin.
 
-2. .env dosyasını oluşturup kaydedin:
+2. .env dosyası oluşturup içeriğine bilgiyi yazın.
 
 ```bash
     cd api
+    touch .env
 ```
 
-Dosyayı açın ve aşağıdaki bilgileri ekleyin:
+Oluşturduğumuz .env dosyasını açın ve aşağıdaki bilgileri ekleyin:
 ```bash
    MONGO_URI=mongodb+srv://uluerguven245:dilay123@cluster0.2mwx72d.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
    PORT=5000
@@ -35,7 +36,7 @@ Dosyayı açın ve aşağıdaki bilgileri ekleyin:
    JWT_EXPIRES=1d 
 ```
 
-Dosyayı Kaydedin ve Kapatın
+Dosyayı Kaydedin ve Kapatın.
 
 2. Backend ve frontend bağımlılıklarını yükleyin:
    ```bash
