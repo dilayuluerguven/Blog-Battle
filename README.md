@@ -23,18 +23,23 @@ Dilerseniz de Hesabı Kaldır butonunu kullanarak hesabınızı ve tüm bloglar�
 
 2. Backend ve frontend bağımlılıklarını yükleyin:
    ```bash
-   cd api
-   npm install
-   cd ../client
-   npm install
+      cd api
+      npm install
+      cd ../client
+      npm install
+   ```
 
 
 3.Frontend'i çalıştırın:
-  cd client
-  npm run dev
+ ```bash
+     cd client
+     npm run dev
+   ```
 4. Backend'i çalıştırın:
-  cd api
-  npm run dev
+    ```bash
+     cd api
+     npm run dev
+    ```
   
 5.Kullanım:
   Kayıt olup giriş yaptıktan sonra blog paylaşabilir ve oy verebilirsiniz.
