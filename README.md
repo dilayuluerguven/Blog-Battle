@@ -21,6 +21,22 @@ Dilerseniz de Hesabı Kaldır butonunu kullanarak hesabınızı ve tüm bloglar�
 
 1. Repository'i bilgisayarınıza indirin.
 
+2. .env dosyasını oluşturup kaydedin:
+
+```bash
+    cd api
+```
+
+Dosyayı açın ve aşağıdaki bilgileri ekleyin:
+```bash
+   MONGO_URI=mongodb+srv://uluerguven245:dilay123@cluster0.2mwx72d.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+   PORT=5000
+   JWT_SECRET=bir-gizli-anahtar
+   JWT_EXPIRES=1d 
+```
+
+Dosyayı Kaydedin ve Kapatın
+
 2. Backend ve frontend bağımlılıklarını yükleyin:
    ```bash
       cd api
@@ -28,20 +44,19 @@ Dilerseniz de Hesabı Kaldır butonunu kullanarak hesabınızı ve tüm bloglar�
       cd ../client
       npm install
    ```
-
-
-3.Frontend'i çalıştırın:
- ```bash
-     cd client
-     npm run dev
-   ```
 4. Backend'i çalıştırın:
     ```bash
      cd api
      npm run dev
     ```
   
-5.Kullanım:
+5.Frontend'i çalıştırın:
+ ```bash
+     cd client
+     npm run dev
+   ```
+
+6.Kullanım:
   Kayıt olup giriş yaptıktan sonra blog paylaşabilir ve oy verebilirsiniz.
   Kayıt olmadan sadece blogları görüntüleyebilirsiniz.
 
